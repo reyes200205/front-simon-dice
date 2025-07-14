@@ -1,0 +1,43 @@
+<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+  <div class="bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl text-center">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">🧠 Simón Dice</h1>
+    <p class="text-gray-600 mb-4">{{ partida?.nombre }}</p>
+
+    <div class="flex justify-between items-center mb-6">
+      <div class="text-left">
+        <p class="text-sm text-gray-600">Jugador actual:</p>
+        <p class="font-bold text-gray-800">{{ jugadorActual?.fullName }}</p>
+      </div>
+      <div class="text-right">
+        <p class="text-sm text-gray-600">Oponente:</p>
+        <p class="font-bold text-gray-800">{{ oponente?.fullName }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="estado?.mensaje" class="mb-4 text-blue-600 font-medium">
+      {{ estado.mensaje }}
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <button
+        *ngFor="let color of juego?.coloresDisponibles"
+        [disabled]="!esMiTurno || inputDeshabilitado"
+        (click)="seleccionarColor(color)"
+        [style.backgroundColor]="color"
+        [ngClass]="{
+            'ring-4 ring-white ring-offset-4 ring-offset-gray-800 animate-ping': color === ultimoColor
+        }"
+        class="h-20 rounded-xl transition transform hover:scale-105 disabled:opacity-50">
+      </button>
+
+    </div>
+
+    <div *ngIf="!esMiTurno" class="text-sm text-gray-500 italic mb-4">
+      Esperando turno del oponente...
+    </div>
+
+    <div *ngIf="resultadoFinal" class="mt-6 text-lg font-semibold text-green-700">
+      {{ resultadoFinal }}
+    </div>
+  </div>
+</div>

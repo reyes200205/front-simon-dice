@@ -1,0 +1,147 @@
+<!-- home.component.html -->
+<div class="min-h-screen bg-gray-50">
+  
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        Únete a la batalla naval
+      </h2>
+    </div>
+  </header>
+
+  
+  <div class="py-4">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        
+        <div class="p-6 text-gray-900 border-b border-gray-200 font-semibold text-2xl">
+          ¡Bienvenido a batalla naval!
+        </div>
+
+        <div class="p-4 text-gray-900">
+          <p class="mb-2">
+            Para comenzar, puedes crear una nueva partida o
+            unirte a una existente.
+          </p>
+          <p>¡Diviértete jugando!</p>
+        </div>
+
+      
+        <div class="p-8 text-gray-900">
+          <button 
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4 transition-colors duration-200 ease-in-out"
+            (click)="openModal()">
+            Crear nueva partida
+          </button>
+
+          <button 
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200 ease-in-out"
+            (click)="navigateToPartidas()">
+            Unirse a una partida
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <div 
+    *ngIf="showModal" 
+    class="fixed inset-0 flex items-center justify-center z-50 p-4"
+    style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px);"
+    (click)="closeModal()">
+    
+    
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-screen overflow-y-auto"
+         style="animation: modalSlideIn 0.3s ease-out;"
+         (click)="$event.stopPropagation()">
+      
+      
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Crea una nueva partida
+        </h3>
+      </div>
+
+      <div class="px-6 py-4">
+        <form [formGroup]="createGameForm" (ngSubmit)="onSubmit()">
+          
+          
+          <div class="mb-4">
+            <label for="nombrePartida" class="block text-sm font-medium text-gray-700 mb-2">
+              Nombre de la partida
+            </label>
+            <input
+              type="text"
+              id="nombrePartida"
+              formControlName="nombre"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+              [class.border-red-500]="isFieldInvalid('nombre')"
+              [class.focus:ring-red-500]="isFieldInvalid('nombre')"
+              [class.focus:border-red-500]="isFieldInvalid('nombre')"
+              placeholder="Ingresa el nombre de la partida">
+            
+            <div *ngIf="isFieldInvalid('nombre')" class="mt-2 text-sm text-red-600">
+              {{ getFieldError('nombre') }}
+            </div>
+          </div>
+
+         
+          <div class="mb-6">
+            <label for="descripcionPartida" class="block text-sm font-medium text-gray-700 mb-2">
+              Descripción
+            </label>
+            <textarea
+              id="descripcionPartida"
+              formControlName="descripcion"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none"
+              [class.border-red-500]="isFieldInvalid('descripcion')"
+              [class.focus:ring-red-500]="isFieldInvalid('descripcion')"
+              [class.focus:border-red-500]="isFieldInvalid('descripcion')"
+              placeholder="Describe tu partida..."></textarea>
+            
+            <div *ngIf="isFieldInvalid('descripcion')" class="mt-2 text-sm text-red-600">
+              {{ getFieldError('descripcion') }}
+            </div>
+          </div>
+
+        <div class="mb-4">
+        <label for="cantidadColores" class="block font-medium">Cantidad de colores</label>
+        <input type="number" id="cantidadColores"
+                class="w-full border p-2 rounded"
+                formControlName="cantidadColores"
+                (input)="actualizarColores()"
+                min="2" max="16">
+        </div>
+
+        <div formArrayName="colores" class="grid grid-cols-2 gap-4 mb-4">
+        <div *ngFor="let colorCtrl of coloresFormArray.controls; let i = index">
+            <label class="text-sm block mb-1">Color {{ i + 1 }}</label>
+            <input type="color" [formControlName]="i" class="w-full h-10 cursor-pointer" />
+        </div>
+        </div>
+
+
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
+              (click)="closeModal()">
+              Cancelar
+            </button>
+            
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+              [disabled]="!createGameForm.valid"
+              [class.opacity-50]="!createGameForm.valid"
+              [class.cursor-not-allowed]="!createGameForm.valid">
+              Crear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
