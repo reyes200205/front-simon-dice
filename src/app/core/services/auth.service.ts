@@ -52,7 +52,7 @@ export interface LoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://76894ef09c7b.ngrok-free.app';
   private token_key = 'auth_token';
   private user_key = 'auth_user';
 
