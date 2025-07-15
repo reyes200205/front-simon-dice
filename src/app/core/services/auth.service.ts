@@ -52,7 +52,7 @@ export interface LoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = '${environment.apiUrl}';
+  private apiUrl = environment.apiUrl;
   private token_key = 'auth_token';
   private user_key = 'auth_user';
 
