@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center relative overflow-hidden p-5">
+  <!-- Background Animation -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+    <div class="absolute top-3/5 right-1/4 w-32 h-32 bg-white/5 rounded-full animate-bounce"></div>
+    <div class="absolute bottom-1/3 left-1/10 w-16 h-16 bg-white/20 rounded-full animate-ping"></div>
+    <div class="absolute top-1/10 right-1/3 w-24 h-24 bg-white/15 rounded-full animate-pulse"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="bg-white/95 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl max-w-md w-full relative z-10">
+    <!-- Logo Section -->
+    <div class="text-center mb-8">
+      <div class="mb-6">
+        <div class="grid grid-cols-2 gap-2 w-32 mx-auto">
+          <div 
+            class="w-14 h-14 rounded-full bg-gradient-to-br from-red-400 to-red-600 transition-all duration-300 cursor-pointer"
+            [class.scale-110]="activeCircle === 'red'"
+            [class.shadow-lg]="activeCircle === 'red'"
+            [class.opacity-70]="activeCircle !== 'red'">
+          </div>
+          <div 
+            class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 transition-all duration-300 cursor-pointer"
+            [class.scale-110]="activeCircle === 'blue'"
+            [class.shadow-lg]="activeCircle === 'blue'"
+            [class.opacity-70]="activeCircle !== 'blue'">
+          </div>
+          <div 
+            class="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 transition-all duration-300 cursor-pointer"
+            [class.scale-110]="activeCircle === 'yellow'"
+            [class.shadow-lg]="activeCircle === 'yellow'"
+            [class.opacity-70]="activeCircle !== 'yellow'">
+          </div>
+          <div 
+            class="w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 transition-all duration-300 cursor-pointer"
+            [class.scale-110]="activeCircle === 'green'"
+            [class.shadow-lg]="activeCircle === 'green'"
+            [class.opacity-70]="activeCircle !== 'green'">
+          </div>
+        </div>
+      </div>
+      <h1 class="text-5xl md:text-6xl font-black text-gray-800 mb-3 tracking-wider">
+        SIMON DICE
+      </h1>
+      <p class="text-xl text-gray-600 font-medium mb-8">Pon a prueba tu memoria</p>
+    </div>
+
+    <!-- Game Description -->
+    <div class="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-200">
+      <h3 class="text-lg font-bold text-gray-800 mb-3 text-center">¿Cómo jugar?</h3>
+      <div class="space-y-2 text-sm text-gray-700">
+        <p>• Observa la secuencia de colores</p>
+        <p>• Repite la secuencia en el mismo orden</p>
+        <p>• Cada ronda añade un nuevo color</p>
+        <p>• ¡No te equivoques o perderás!</p>
+      </div>
+    </div>
+
+    <!-- Auth Buttons -->
+    <div class="space-y-4">
+      <button 
+        (click)="goToLogin()"
+        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        <span class="text-lg tracking-wide">INICIAR SESIÓN</span>
+      </button>
+      
+      <button 
+        (click)="goToRegister()"
+        class="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        <span class="text-lg tracking-wide">REGISTRARSE</span>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-8">
+      <p class="text-sm text-gray-500">
+        ¿Listo para el desafío? <br>
+        <span class="font-semibold text-indigo-600">¡Inicia sesión y demuestra tu memoria!</span>
+      </p>
+    </div>
+  </div>
+</div>
