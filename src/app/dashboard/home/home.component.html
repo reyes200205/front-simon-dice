@@ -106,22 +106,42 @@
             </div>
           </div>
 
-        <div class="mb-4">
-        <label for="cantidadColores" class="block font-medium">Cantidad de colores</label>
-        <input type="number" id="cantidadColores"
-                class="w-full border p-2 rounded"
-                formControlName="cantidadColores"
-                (input)="actualizarColores()"
-                min="2" max="16">
-        </div>
+          <div class="mb-4">
+            <label for="cantidadColores" class="block font-medium">Cantidad de colores</label>
+            <input type="number" id="cantidadColores"
+                    class="w-full border p-2 rounded"
+                    formControlName="cantidadColores"
+                    (input)="actualizarColores()"
+                    min="2" max="16">
+          </div>
 
-        <div formArrayName="colores" class="grid grid-cols-2 gap-4 mb-4">
-        <div *ngFor="let colorCtrl of coloresFormArray.controls; let i = index">
-            <label class="text-sm block mb-1">Color {{ i + 1 }}</label>
-            <input type="color" [formControlName]="i" class="w-full h-10 cursor-pointer" />
-        </div>
-        </div>
-
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Selecciona los colores
+            </label>
+            
+            <div *ngIf="hasColoresDuplicados()" class="mb-2 text-sm text-red-600">
+              {{ getColoresDuplicadosError() }}
+            </div>
+            
+            <div formArrayName="colores" class="grid grid-cols-2 gap-4">
+              <div *ngFor="let colorCtrl of coloresFormArray.controls; let i = index" class="flex flex-col">
+                <label class="text-sm block mb-1">Color {{ i + 1 }}</label>
+                <input 
+                  type="color" 
+                  [formControlName]="i" 
+                  class="w-full h-10 cursor-pointer rounded border"
+                  [class.border-red-500]="isColorDuplicado(i)"
+                  [class.border-gray-300]="!isColorDuplicado(i)"
+                />
+                
+              
+                <div *ngIf="isColorDuplicado(i)" class="mt-1 text-xs text-red-600">
+                  Color duplicado
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="flex justify-end space-x-3">
             <button
@@ -134,10 +154,10 @@
             <button
               type="submit"
               class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-              [disabled]="!createGameForm.valid"
-              [class.opacity-50]="!createGameForm.valid"
-              [class.cursor-not-allowed]="!createGameForm.valid">
-              Crear
+              [disabled]="!createGameForm.valid || isLoading"
+              [class.opacity-50]="!createGameForm.valid || isLoading"
+              [class.cursor-not-allowed]="!createGameForm.valid || isLoading">
+              {{ isLoading ? 'Creando...' : 'Crear' }}
             </button>
           </div>
         </form>

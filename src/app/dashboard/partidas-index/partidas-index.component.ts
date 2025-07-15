@@ -35,6 +35,7 @@ export class PartidasIndexComponent implements OnInit, OnDestroy {
       next: (partidas: PartidaAPi[]) => {
         this.partidas = partidas;
         this.loading = false;
+        console.log('Partidas obtenidas:', partidas);
       },
       error: () => {
         this.loading = false;
@@ -50,7 +51,6 @@ export class PartidasIndexComponent implements OnInit, OnDestroy {
         if (response && response.success && response.data && response.data.partida) {
           const partidaId = response.data.partida.id;
           if (partidaId) {
-            // Detener el polling antes de navegar
             if (this.pollingSubscription) {
               this.pollingSubscription.unsubscribe();
             }

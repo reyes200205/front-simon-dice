@@ -5,7 +5,6 @@
       <p class="mt-2 text-sm text-gray-600">Lista de todas las partidas disponibles</p>
     </div>
 
-    <!-- Loading State -->
     <div *ngIf="loading" class="mt-4">
       <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
         <div class="flex items-center">
@@ -82,7 +81,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex -space-x-2">
-                    {{ partida.usuarios[0].fullName || 'Sin usuarios' }}
+                    {{ partida.jugador1.fullName }}
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">

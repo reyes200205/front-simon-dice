@@ -37,7 +37,11 @@ export interface PartidaAPi {
   ganadorId: number | null;
   createdAt: string;
   updatedAt: string;
-  usuarios: UsuarioPartida[];
+  jugador1:{
+    id:number;
+    fullName:string;
+    email:string;
+  }
 }
 
 export interface IndexPartidasResponse {

@@ -2,7 +2,7 @@
   <div class="bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl text-center">
     <h1 class="text-3xl font-bold text-gray-800 mb-2">🧠 Simón Dice</h1>
     <p class="text-gray-600 mb-4">{{ partida?.nombre }}</p>
-
+    
     <div class="flex justify-between items-center mb-6">
       <div class="text-left">
         <p class="text-sm text-gray-600">Jugador actual:</p>
@@ -13,36 +13,54 @@
         <p class="font-bold text-gray-800">{{ oponente?.fullName }}</p>
       </div>
     </div>
-
+    
     <div *ngIf="estado?.mensaje" class="mb-4 text-blue-600 font-medium">
       {{ estado.mensaje }}
     </div>
-
+    
+    <div *ngIf="mostrarMensajeUltimoColor" 
+         class="mb-4 text-lg font-bold text-purple-600 bg-purple-100 rounded-lg p-3 border-2 border-purple-300 flex items-center justify-center gap-3">
+      <span>🎯 Último color:</span>
+      <div class="w-8 h-8 rounded-lg border-2 border-gray-300 shadow-md" 
+           [style.backgroundColor]="ultimoColor"></div>
+      <!-- <span class="text-sm font-mono">{{ ultimoColor }}</span> -->
+    </div>
+    
+    <div class="mb-4 text-sm text-gray-600">
+      Nivel: {{ nivelActual + 1 }}
+    </div>
+    
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-      <button 
-  *ngFor="let color of juego?.coloresDisponibles"
-  [disabled]="!esMiTurno || inputDeshabilitado"
-  (click)="seleccionarColor(color)"
-  [ngClass]="{
-    'ring-4 ring-white scale-105 transition transform': clickFeedback[color],
-    'hover:scale-105': esMiTurno && !inputDeshabilitado,
-    'animate-pulse ring-4 ring-yellow-300': color === ultimoColorVisible
-  }"
-  [style.backgroundColor]="color"
-  class="h-20 rounded-xl transition-all duration-300 ease-in-out disabled:opacity-50 shadow-md w-full"
-></button>
-
+      <button
+        *ngFor="let color of juego?.coloresDisponibles"
+        [disabled]="!esMiTurno || inputDeshabilitado"
+        (click)="seleccionarColor(color)"
+        [ngClass]="{
+          'opacity-60 scale-95 ring-4 ring-gray-400': clickFeedback[color],
+          'hover:scale-105 hover:shadow-lg': esMiTurno && !inputDeshabilitado,
+          'animate-pulse ring-4 ring-yellow-300 scale-110': color === ultimoColorVisible,
+          'cursor-not-allowed opacity-40': !esMiTurno || inputDeshabilitado
+        }"
+        [style.backgroundColor]="color"
+        class="h-20 rounded-xl transition-all duration-300 ease-in-out shadow-md w-full transform hover:brightness-110 active:scale-95"
+      ></button>
     </div>
-
-    <div *ngIf="!esMiTurno" class="text-sm text-gray-500 italic mb-4">
-      Esperando turno del oponente...
+    
+    <div *ngIf="!esMiTurno && !juegoTerminado" 
+         class="text-sm text-gray-500 italic mb-4 bg-gray-100 rounded-lg p-2">
+      ⏳ Esperando turno del oponente...
     </div>
-
+    
+    <!-- <div *ngIf="esMiTurno && !juegoTerminado" 
+         class="text-sm text-green-600 mb-4 bg-green-100 rounded-lg p-2">
+      🎮 Tu turno - Colores seleccionados: {{ coloresSeleccionados.length }} / {{ nivelActual + 1 }}
+    </div> -->
+    
     <div *ngIf="resultadoFinal" class="mt-6 text-lg font-semibold text-green-700">
-      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl" (click)="volver()">
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl transition-colors" 
+              (click)="volver()">
         Volver a las partidas
       </button>
-
     </div>
   </div>
 </div>

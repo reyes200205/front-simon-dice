@@ -37,6 +37,8 @@ export class PartidaComponent implements OnInit, OnDestroy {
   private pollingSubscription?: Subscription;
   private apiUrl = environment.apiUrl;
 
+  // Nuevas propiedades para las animaciones mejoradas
+  mostrarMensajeUltimoColor: boolean = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {}
 
@@ -87,62 +89,59 @@ export class PartidaComponent implements OnInit, OnDestroy {
     this.mostrarUltimoColor = data.juego.mostrarUltimoColor;
     this.nivelActual = data.juego.nivelActual;
 
-    if (this.mostrarUltimoColor && this.ultimoColor) {
+    // Solo mostrar el último color cuando ES mi turno y hay un último color
+    if (this.esMiTurno && this.mostrarUltimoColor && this.ultimoColor) {
+      this.mostrarMensajeUltimoColor = true;
+      // Mantener la animación solo en el botón
       this.ultimoColorVisible = null;
       setTimeout(() => {
         this.ultimoColorVisible = this.ultimoColor;
-
         setTimeout(() => {
           this.ultimoColorVisible = null;
-        }, 500); 
-      }, 50); 
+        }, 800);
+      }, 100);
+    } else {
+      this.mostrarMensajeUltimoColor = false;
     }
   }
 
+  // Eliminamos esta función ya que no la necesitamos
+  // mostrarAnimacionUltimoColor(): void {
 
+  seleccionarColor(color: string): void {
+    if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado) return;
 
+    this.coloresSeleccionados.push(color);
 
+    // Animación de click mejorada (más opaco y duradero)
+    this.clickFeedback[color] = true;
+    setTimeout(() => {
+      this.clickFeedback[color] = false;
+    }, 250); // Aumenté el tiempo para que se vea mejor el efecto
 
-seleccionarColor(color: string): void {
- 
+    const longitudSecuenciaCompleta = this.nivelActual + 1;
+    
+    if (this.coloresSeleccionados.length === longitudSecuenciaCompleta) {
+      this.inputDeshabilitado = true;
 
-  if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado) return;
-
-  this.coloresSeleccionados.push(color);
-
-  
-
-  this.clickFeedback[color] = true;
-  setTimeout(() => {
-    this.clickFeedback[color] = false;
-  }, 150); 
-
-  const longitudSecuenciaCompleta = this.nivelActual + 1;
-  
-  if (this.coloresSeleccionados.length === longitudSecuenciaCompleta) {
-    this.inputDeshabilitado = true;
-
-    this.http.post(`${this.apiUrl}/disparo/${this.partidaId}`, {
-      secuencia: this.coloresSeleccionados
-    }).subscribe({
-      next: (resp: any) => {
-        if (resp.success) {
-          this.mensaje = resp.resultado.mensaje;
-          this.coloresSeleccionados = [];
-          this.actualizarJuego();
+      this.http.post(`${this.apiUrl}/disparo/${this.partidaId}`, {
+        secuencia: this.coloresSeleccionados
+      }).subscribe({
+        next: (resp: any) => {
+          if (resp.success) {
+            this.mensaje = resp.resultado.mensaje;
+            this.coloresSeleccionados = [];
+            this.actualizarJuego();
+            this.inputDeshabilitado = false;
+          }
+        },
+        error: () => {
+          this.mensaje = 'Error al enviar secuencia.';
           this.inputDeshabilitado = false;
         }
-      },
-      error: () => {
-        this.mensaje = 'Error al enviar secuencia.';
-        this.inputDeshabilitado = false;
-      }
-    });
+      });
+    }
   }
-}
-
-
-
 
   actualizarJuego(): void {
     this.http.get(`${this.apiUrl}/partida/${this.partidaId}`).subscribe({
