@@ -21,10 +21,15 @@ export class PartidaComponent implements OnInit, OnDestroy {
   estado: any = null;
   resultadoFinal: any = null;
   ultimoColor: string | null = null;
+  ultimoColorVisible: string | null = null;
   inputDeshabilitado: boolean | undefined;
-
+  mostrarUltimoColor: boolean = false;
+  animacionesColores: { [color: string]: boolean } = {};
+  clickFeedback: { [color: string]: boolean } = {};
+  nivelActual: number = 0;
   mensaje: string = '';
   coloresSeleccionados: string[] = [];
+  private ultimoColorAnimado: string | null = null;
   esMiTurno: boolean = false;
   juegoTerminado: boolean = false;
   ganador: any = null;
@@ -67,28 +72,77 @@ export class PartidaComponent implements OnInit, OnDestroy {
     this.oponente = data.oponente;
     this.juego = data.juego;
     this.estado = data.estado;
-    this.ultimoColor = data.juego.ultimoColor;
     this.resultadoFinal = data.resultadoFinal;
+
     this.esMiTurno = data.estado.esMiTurno;
     this.juegoTerminado = data.estado.juegoTerminado;
+    if (this.juegoTerminado && this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
+
     this.ganador = data.estado.ganador;
     this.mensaje = data.estado.mensaje;
-  }
 
-  seleccionarColor(color: string): void {
-    if (!this.esMiTurno || this.juegoTerminado) return;
-    this.coloresSeleccionados.push(color);
-    const esCorrecto = this.coloresSeleccionados.every((c, i) => c === this.juego.secuencia[i]);
+    this.ultimoColor = data.juego.ultimoColor;
+    this.mostrarUltimoColor = data.juego.mostrarUltimoColor;
+    this.nivelActual = data.juego.nivelActual;
 
-    if (!esCorrecto) {
-      this.mensaje = '¡Secuencia incorrecta!';
-      this.coloresSeleccionados = [];
-    } else if (this.coloresSeleccionados.length === this.juego.secuencia.length) {
-      this.mensaje = '¡Correcto! Espera tu siguiente turno';
-      this.coloresSeleccionados = [];
-      this.actualizarJuego();
+    if (this.mostrarUltimoColor && this.ultimoColor) {
+      this.ultimoColorVisible = null;
+      setTimeout(() => {
+        this.ultimoColorVisible = this.ultimoColor;
+
+        setTimeout(() => {
+          this.ultimoColorVisible = null;
+        }, 500); 
+      }, 50); 
     }
   }
+
+
+
+
+
+seleccionarColor(color: string): void {
+ 
+
+  if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado) return;
+
+  this.coloresSeleccionados.push(color);
+
+  
+
+  this.clickFeedback[color] = true;
+  setTimeout(() => {
+    this.clickFeedback[color] = false;
+  }, 150); 
+
+  const longitudSecuenciaCompleta = this.nivelActual + 1;
+  
+  if (this.coloresSeleccionados.length === longitudSecuenciaCompleta) {
+    this.inputDeshabilitado = true;
+
+    this.http.post(`${this.apiUrl}/disparo/${this.partidaId}`, {
+      secuencia: this.coloresSeleccionados
+    }).subscribe({
+      next: (resp: any) => {
+        if (resp.success) {
+          this.mensaje = resp.resultado.mensaje;
+          this.coloresSeleccionados = [];
+          this.actualizarJuego();
+          this.inputDeshabilitado = false;
+        }
+      },
+      error: () => {
+        this.mensaje = 'Error al enviar secuencia.';
+        this.inputDeshabilitado = false;
+      }
+    });
+  }
+}
+
+
+
 
   actualizarJuego(): void {
     this.http.get(`${this.apiUrl}/partida/${this.partidaId}`).subscribe({
@@ -118,6 +172,6 @@ export class PartidaComponent implements OnInit, OnDestroy {
   }
 
   volver(): void {
-    this.router.navigate(['/partidas']);
+    this.router.navigate(['/app/partidas']);
   }
 }

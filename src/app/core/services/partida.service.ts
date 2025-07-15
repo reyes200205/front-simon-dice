@@ -67,7 +67,9 @@ interface MisPartidasResponse {
 export interface CreatePartidaData {
   nombre: string;
   descripcion: string;
+  colores_disponibles: string[];
 }
+
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -92,10 +94,10 @@ export class PartidaService {
   verificarEstado(partidaId: number): Observable<EstadoPartida> {
     if (!partidaId || isNaN(partidaId)) {
       return throwError(() => new Error('ID de partida inválido'));
-    }
+    } 
 
     return this.http
-      .get<EstadoPartida>(`${this.partidasUrl}/${partidaId}/verificar-estado`)
+      .get<EstadoPartida>(`${this.apiUrl}/verificar-estado/${partidaId}`)
       .pipe(
         catchError((error) => {
           console.error('Error al verificar estado:', error);
@@ -123,7 +125,7 @@ export class PartidaService {
     }
 
     return this.http
-      .get<PartidaResponse>(`${this.partidasUrl}/${partidaId}`)
+      .get<PartidaResponse>(`${this.apiUrl}/partida/${partidaId}`)
       .pipe(
         catchError((error) => {
           console.error('Error al obtener partida:', error);
@@ -131,6 +133,7 @@ export class PartidaService {
         })
       );
   }
+
 
   getPartidas(): Observable<PartidaAPi[]> {
     return this.http.get<IndexPartidasResponse>(this.partidasUrl).pipe(
@@ -149,16 +152,16 @@ export class PartidaService {
   }
 
   createPartida(data: CreatePartidaData): Observable<Partida> {
-    if (!data || !data.nombre || !data.descripcion) {
+    if (!data || !data.nombre || !data.descripcion || !data.colores_disponibles) {
       return throwError(() => new Error('Datos de partida inválidos'));
     }
 
     return this.http
-      .post<ApiResponse<CreatePartidaApiData>>(this.partidasUrl, data)
+      .post<{ message: string; partida: Partida }>(this.partidasUrl, data)
       .pipe(
         map((response) => {
-          if (response.success && response.data && response.data.partida) {
-            return response.data.partida;
+          if (response.partida && response.partida.id) {
+            return response.partida;
           } else {
             throw new Error('Respuesta de API inválida');
           }
@@ -169,6 +172,7 @@ export class PartidaService {
         })
       );
   }
+
 
   updatePartida(partida: Partida): Observable<Partida> {
     if (!partida || !partida.id || isNaN(partida.id)) {
@@ -198,9 +202,10 @@ export class PartidaService {
 
   unirsePartida(partida: PartidaAPi): Observable<unirsePartidaResponse> {
     return this.http.post<unirsePartidaResponse>(
-      `${this.partidasUrl}/${partida.id}/unirse`,
+      `${this.apiUrl}/unirse-partida/${partida.id}`,
       partida
     );
+
   }
 
   deletePartida(id: number): Observable<any> {
@@ -232,71 +237,6 @@ export class PartidaService {
       `${this.apiUrl}/estadisticas/partidas/${tipo}`
     );
   }
-   obtenerDetalle(id: string | number, from: string) {
-    return this.http.get<any>(`${this.apiUrl}/detalle-partida/${id}`, {
-      params: { from },
-    }).toPromise().then(response => {
-      if (!response.success) throw new Error('Partida no encontrada');
+   
 
-      const partida = this.adaptarPartida(response.data.partida);
-      const movimientos = this.adaptarMovimientos(response.data.movimientos || []); 
-
-      partida.jugadores.forEach((j: any) => {
-      j.movimientos_atacante = movimientos.filter(m => m.atacante.id === j.id);
-      j.movimientos_defensor = movimientos.filter(m => m.defensor.id === j.id);
-    });
-      return { partida, movimientos };
-    });
-  }
-
-  private adaptarPartida(data: any): any {
-    return {
-      id: data.id,
-      estado: data.estado,
-      ganador_id: data.ganadorId,
-      jugadores: data.jugadores.map((j: any) => ({
-        id: j.id,
-        usuario: {
-          id: j.usuario.id,
-          name: j.usuario.fullName,
-          email: j.usuario.email
-        },
-        barcos: (j.barcos || []).map((b: any) => ({
-          id: b.id,
-          coordenada: b.coordenada,
-          tipo: 'barco', 
-          hundido: b.hundido
-        })),
-        movimientos_atacante: [],
-        movimientos_defensor: [],
-      }))
-    };
-  }
-
-  private adaptarMovimientos(data: any[]): any[] {
-    return data.map(m => ({
-      id: m.id,
-      coordenada: m.coordenada,
-      acierto: m.acierto,
-      hundido: m.hundido ?? false,
-      idAtacante: m.idAtacante,
-      idDefensor: m.idDefensor,
-      atacante: {
-        id: m.atacante.id,
-        usuario: {
-          id: m.atacante.usuario.id,
-          name: m.atacante.usuario.fullName,
-          email: m.atacante.usuario.email,
-        },
-      },
-      defensor: {
-        id: m.defensor.id,
-        usuario: {
-          id: m.defensor.usuario.id,
-          name: m.defensor.usuario.fullName,
-          email: m.defensor.usuario.email,
-        },
-      }
-    }));
-  }
 }

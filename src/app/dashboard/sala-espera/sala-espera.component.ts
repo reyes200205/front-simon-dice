@@ -93,20 +93,25 @@ export class SalaEsperaComponent implements OnInit, OnDestroy {
   }
 
   private cargarPartida(): void {
-    this.partidaService.obtenerPartida(this.partidaId).subscribe({
-      next: (response) => {
-        this.partida = response.partida;
-        this.totalJugadores = response.totalJugadores;
-        this.jugadoresActuales = response.totalJugadores;
-        this.loading = false;
-        this.iniciarPolling();
-      },
-      error: (error) => {
-        console.error('Error al cargar la partida:', error);
-        this.router.navigate(['/']);
-      },
-    });
-  }
+  this.partidaService.verificarEstado(this.partidaId).subscribe({
+    next: (estado) => {
+      this.partida = {
+        id: this.partidaId,
+        nombre: `Partida ${this.partidaId}`,
+        descripcion: '' 
+      };
+      this.totalJugadores = estado.totalJugadores;
+      this.jugadoresActuales = estado.totalJugadores;
+      this.loading = false;
+      this.iniciarPolling();
+    },
+    error: (error) => {
+      console.error('Error al cargar estado de la partida:', error);
+      this.router.navigate(['/']);
+    },
+  });
+}
+
 
   private iniciarPolling(): void {
     this.pollingSubscription = interval(2000)
@@ -125,7 +130,8 @@ export class SalaEsperaComponent implements OnInit, OnDestroy {
             this.isRedirecting = true;
 
             this.redirectTimeout = window.setTimeout(() => {
-              this.router.navigateByUrl(estado.urlRedireccion).then(() => {
+              this.router.navigateByUrl('/app' + estado.urlRedireccion).then(() => {
+
                 this.isRedirecting = false;
               });
             }, 2000);

@@ -49,9 +49,10 @@ export class HomeComponent {
       this.errorMessage = ''; 
       
      const formData = {
-        ...this.createGameForm.value,
-        colores: this.createGameForm.value.colores.map((color: string) => color.toLowerCase())
-      };
+      nombre: this.createGameForm.value.nombre,
+      descripcion: this.createGameForm.value.descripcion,
+      colores_disponibles: this.createGameForm.value.colores.map((color: string) => color.toLowerCase()) 
+    };
       
       console.log('Enviando datos:', formData);
 
@@ -95,7 +96,7 @@ export class HomeComponent {
   }
 
   navigateToPartidas(): void {
-    this.router.navigate(['app/mis-partidas']);
+    this.router.navigate(['app/partidas']);
   }
 
   isFieldInvalid(fieldName: string): boolean {

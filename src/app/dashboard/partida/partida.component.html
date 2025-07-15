@@ -19,16 +19,18 @@
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-      <button
-        *ngFor="let color of juego?.coloresDisponibles"
-        [disabled]="!esMiTurno || inputDeshabilitado"
-        (click)="seleccionarColor(color)"
-        [style.backgroundColor]="color"
-        [ngClass]="{
-            'ring-4 ring-white ring-offset-4 ring-offset-gray-800 animate-ping': color === ultimoColor
-        }"
-        class="h-20 rounded-xl transition transform hover:scale-105 disabled:opacity-50">
-      </button>
+      <button 
+  *ngFor="let color of juego?.coloresDisponibles"
+  [disabled]="!esMiTurno || inputDeshabilitado"
+  (click)="seleccionarColor(color)"
+  [ngClass]="{
+    'ring-4 ring-white scale-105 transition transform': clickFeedback[color],
+    'hover:scale-105': esMiTurno && !inputDeshabilitado,
+    'animate-pulse ring-4 ring-yellow-300': color === ultimoColorVisible
+  }"
+  [style.backgroundColor]="color"
+  class="h-20 rounded-xl transition-all duration-300 ease-in-out disabled:opacity-50 shadow-md w-full"
+></button>
 
     </div>
 
@@ -37,7 +39,10 @@
     </div>
 
     <div *ngIf="resultadoFinal" class="mt-6 text-lg font-semibold text-green-700">
-      {{ resultadoFinal }}
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl" (click)="volver()">
+        Volver a las partidas
+      </button>
+
     </div>
   </div>
 </div>
