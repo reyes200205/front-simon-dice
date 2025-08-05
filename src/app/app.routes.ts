@@ -8,8 +8,14 @@ import { HomeComponent } from './dashboard/home/home.component';
 import { PartidaComponent } from './dashboard/partida/partida.component';
 import { PartidasIndexComponent } from './dashboard/partidas-index/partidas-index.component';
 import { SalaEsperaComponent } from './dashboard/sala-espera/sala-espera.component';
+import { WelcomeComponent } from './pages/welcome/welcome.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: WelcomeComponent,
+    canActivate: [GuestGuard]
+  },
     {
     path: 'login',
     component: LoginComponent,
