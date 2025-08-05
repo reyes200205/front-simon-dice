@@ -25,13 +25,13 @@ export class HomeComponent {
     this.createGameForm = this.formBuilder.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       descripcion: ['', [Validators.required, Validators.minLength(5)]],
-      cantidadColores: [2, [Validators.required, Validators.min(2), Validators.max(10)]],
-      colores: this.formBuilder.array([], this.noDuplicateColorsValidator)  // Agregar validador personalizado
+      cantidadColores: [2, [Validators.required, Validators.min(2), Validators.max(999)]],
+      colores: this.formBuilder.array([], this.noDuplicateColorsValidator) 
     });
     this.actualizarColores();
   }
 
-  // Validador personalizado para verificar colores duplicados
+  
   noDuplicateColorsValidator(control: AbstractControl): ValidationErrors | null {
     const coloresArray = control as FormArray;
     const colores = coloresArray.controls.map(ctrl => ctrl.value?.toLowerCase());
