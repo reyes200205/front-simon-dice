@@ -10,6 +10,40 @@ export interface Partida {
   nombre: string;
   descripcion: string;
 }
+export interface PartidasUserResponse {
+  success: boolean
+  data: Partidas[]
+}
+
+export interface Partidas{
+  id: number
+  nombre: string
+  descripcion: string
+  coloresDisponibles: string[]
+  secuencia: string[]
+  jugador1Id: number
+  jugador2Id: number
+  estado: string
+  turnoActual: number
+  ganadorId?: number
+  createdAt: string
+  updatedAt: string
+  jugador1: Jugador1
+  jugador2: Jugador2
+}
+
+export interface Jugador1 {
+  id: number
+  fullName: string
+  email: string
+}
+
+export interface Jugador2 {
+  id: number
+  fullName: string
+  email: string
+}
+
 
 interface UsuarioPartida {
   id: number;
@@ -118,6 +152,16 @@ export class PartidaService {
     return this.http.delete<any>(`${this.partidasUrl}/${partidaId}`).pipe(
       catchError((error) => {
         console.error('Error al cancelar partida:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getPartidasUsuario(): Observable<PartidasUserResponse> {
+
+    return this.http.get<PartidasUserResponse>(`${this.apiUrl}/partidas/user`).pipe(
+      catchError((error) => {
+        console.error('Error al obtener partidas:', error);
         return throwError(() => error);
       })
     );

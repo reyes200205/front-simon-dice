@@ -2,7 +2,7 @@
   <div class="bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl text-center">
     <h1 class="text-3xl font-bold text-gray-800 mb-2">🧠 Simón Dice</h1>
     <p class="text-gray-600 mb-4">{{ partida?.nombre }}</p>
-    
+        
     <div class="flex justify-between items-center mb-6">
       <div class="text-left">
         <p class="text-sm text-gray-600">Jugador actual:</p>
@@ -13,23 +13,22 @@
         <p class="font-bold text-gray-800">{{ oponente?.fullName }}</p>
       </div>
     </div>
-    
+        
     <div *ngIf="estado?.mensaje" class="mb-4 text-blue-600 font-medium">
       {{ estado.mensaje }}
     </div>
-    
-    <div *ngIf="mostrarMensajeUltimoColor" 
+        
+    <div *ngIf="mostrarMensajeUltimoColor"
          class="mb-4 text-lg font-bold text-purple-600 bg-purple-100 rounded-lg p-3 border-2 border-purple-300 flex items-center justify-center gap-3">
       <span>🎯 Último color:</span>
-      <div class="w-8 h-8 rounded-lg border-2 border-gray-300 shadow-md" 
+      <div class="w-8 h-8 rounded-lg border-2 border-gray-300 shadow-md"
            [style.backgroundColor]="ultimoColor"></div>
-      <!-- <span class="text-sm font-mono">{{ ultimoColor }}</span> -->
     </div>
-    
+        
     <div class="mb-4 text-sm text-gray-600">
       Nivel: {{ nivelActual + 1 }}
     </div>
-    
+        
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
       <button
         *ngFor="let color of juego?.coloresDisponibles"
@@ -45,20 +44,67 @@
         class="h-20 rounded-xl transition-all duration-300 ease-in-out shadow-md w-full transform hover:brightness-110 active:scale-95"
       ></button>
     </div>
-    
-    <div *ngIf="!esMiTurno && !juegoTerminado" 
+        
+    <div *ngIf="!esMiTurno && !juegoTerminado"
          class="text-sm text-gray-500 italic mb-4 bg-gray-100 rounded-lg p-2">
       ⏳ Esperando turno del oponente...
     </div>
-    
-    <!-- <div *ngIf="esMiTurno && !juegoTerminado" 
-         class="text-sm text-green-600 mb-4 bg-green-100 rounded-lg p-2">
-      🎮 Tu turno - Colores seleccionados: {{ coloresSeleccionados.length }} / {{ nivelActual + 1 }}
-    </div> -->
-    
+        
+    <div *ngIf="esMiTurno && !juegoTerminado"
+         class="text-sm text-green-600 mb-4 bg-green-100 rounded-lg p-3">
+      <div class="mb-2">🎮 Tu turno</div>
+      
+      <!-- Visualización de la secuencia seleccionada -->
+      <div class="flex items-center justify-center gap-1 mb-3">
+        <span class="text-xs text-gray-600 mr-2">Tu secuencia:</span>
+        <div class="flex gap-1">
+          <!-- Solo colores ya seleccionados -->
+          <div *ngFor="let color of coloresSeleccionados; let i = index"
+               class="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm"
+               [style.backgroundColor]="color">
+          </div>
+          <!-- Mostrar mensaje si no hay colores seleccionados -->
+          <span *ngIf="coloresSeleccionados.length === 0" class="text-xs text-gray-400 italic">
+            Selecciona los colores...
+          </span>
+        </div>
+      </div>
+      
+      <!-- Botones de acción -->
+      <div class="flex gap-2 justify-center">
+        <!-- Botón para limpiar secuencia -->
+        <button *ngIf="coloresSeleccionados.length > 0"
+                (click)="limpiarSecuencia()"
+                [disabled]="inputDeshabilitado"
+                class="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+          🗑️ Limpiar
+        </button>
+        
+        <!-- Botón para enviar secuencia -->
+        <button *ngIf="coloresSeleccionados.length > 0"
+                (click)="enviarSecuencia()"
+                [disabled]="inputDeshabilitado"
+                [ngClass]="{
+                  'bg-red-500 hover:bg-red-600': nivelActual === 0 && coloresSeleccionados.length !== 1,
+                  'bg-blue-500 hover:bg-blue-600': !(nivelActual === 0 && coloresSeleccionados.length !== 1)
+                }"
+                class="disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+          <span *ngIf="nivelActual === 0 && coloresSeleccionados.length === 1">
+            🚀 Comenzar Juego
+          </span>
+          <span *ngIf="nivelActual === 0 && coloresSeleccionados.length !== 1">
+            ⚠️ Solo 1 color para empezar
+          </span>
+          <span *ngIf="nivelActual > 0">
+            🚀 Enviar Secuencia ({{ coloresSeleccionados.length }})
+          </span>
+        </button>
+      </div>
+    </div>
+        
     <div *ngIf="resultadoFinal" class="mt-6 text-lg font-semibold text-green-700">
-      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl transition-colors" 
-              (click)="volver()">
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl transition-colors"
+               (click)="volver()">
         Volver a las partidas
       </button>
     </div>

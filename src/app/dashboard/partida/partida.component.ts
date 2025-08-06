@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-partida',
   templateUrl: './partida.component.html',
   styleUrls: ['./partida.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class PartidaComponent implements OnInit, OnDestroy {
   partidaId!: string;
@@ -37,10 +37,13 @@ export class PartidaComponent implements OnInit, OnDestroy {
   private pollingSubscription?: Subscription;
   private apiUrl = environment.apiUrl;
 
-  // Nuevas propiedades para las animaciones mejoradas
   mostrarMensajeUltimoColor: boolean = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.partidaId = this.route.snapshot.params['id'];
@@ -64,7 +67,7 @@ export class PartidaComponent implements OnInit, OnDestroy {
       error: () => {
         this.mensaje = 'Error al cargar la partida';
         this.cargando = false;
-      }
+      },
     });
   }
 
@@ -89,10 +92,8 @@ export class PartidaComponent implements OnInit, OnDestroy {
     this.mostrarUltimoColor = data.juego.mostrarUltimoColor;
     this.nivelActual = data.juego.nivelActual;
 
-    // Solo mostrar el último color cuando ES mi turno y hay un último color
     if (this.esMiTurno && this.mostrarUltimoColor && this.ultimoColor) {
       this.mostrarMensajeUltimoColor = true;
-      // Mantener la animación solo en el botón
       this.ultimoColorVisible = null;
       setTimeout(() => {
         this.ultimoColorVisible = this.ultimoColor;
@@ -105,28 +106,42 @@ export class PartidaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Eliminamos esta función ya que no la necesitamos
-  // mostrarAnimacionUltimoColor(): void {
-
   seleccionarColor(color: string): void {
-    if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado) return;
+    if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado)
+      return;
 
     this.coloresSeleccionados.push(color);
 
-    // Animación de click mejorada (más opaco y duradero)
     this.clickFeedback[color] = true;
     setTimeout(() => {
       this.clickFeedback[color] = false;
     }, 250); // Aumenté el tiempo para que se vea mejor el efecto
 
-    const longitudSecuenciaCompleta = this.nivelActual + 1;
-    
-    if (this.coloresSeleccionados.length === longitudSecuenciaCompleta) {
-      this.inputDeshabilitado = true;
+  }
 
-      this.http.post(`${this.apiUrl}/disparo/${this.partidaId}`, {
-        secuencia: this.coloresSeleccionados
-      }).subscribe({
+  limpiarSecuencia(): void {
+    if (this.inputDeshabilitado) return;
+    
+    this.coloresSeleccionados = [];
+    this.mensaje = ''; 
+  }
+
+  enviarSecuencia(): void {
+    if (!this.esMiTurno || this.juegoTerminado || this.inputDeshabilitado || this.coloresSeleccionados.length === 0) 
+      return;
+
+    if (this.nivelActual === 0 && this.coloresSeleccionados.length !== 1) {
+      this.mensaje = 'Para empezar el juego, debes seleccionar exactamente un color.';
+      return;
+    }
+
+    this.inputDeshabilitado = true;
+
+    this.http
+      .post(`${this.apiUrl}/disparo/${this.partidaId}`, {
+        secuencia: this.coloresSeleccionados,
+      })
+      .subscribe({
         next: (resp: any) => {
           if (resp.success) {
             this.mensaje = resp.resultado.mensaje;
@@ -135,12 +150,11 @@ export class PartidaComponent implements OnInit, OnDestroy {
             this.inputDeshabilitado = false;
           }
         },
-        error: () => {
-          this.mensaje = 'Error al enviar secuencia.';
+        error: (err) => {
+          this.mensaje = err.error?.message || 'Error al enviar secuencia.';
           this.inputDeshabilitado = false;
-        }
+        },
       });
-    }
   }
 
   actualizarJuego(): void {
@@ -149,25 +163,27 @@ export class PartidaComponent implements OnInit, OnDestroy {
         if (resp.success) {
           this.procesarDatos(resp.data);
         }
-      }
+      },
     });
   }
 
   iniciarPolling(): void {
-    this.pollingSubscription = interval(3000).pipe(
-      switchMap(() => {
-        if (!this.juegoTerminado) {
-          return this.http.get(`${this.apiUrl}/partida/${this.partidaId}`);
-        }
-        return of(null);
-      }),
-      catchError(error => {
-        console.error('Error en polling:', error);
-        return of(null);
-      })
-    ).subscribe((resp: any) => {
-      if (resp?.success) this.procesarDatos(resp.data);
-    });
+    this.pollingSubscription = interval(3000)
+      .pipe(
+        switchMap(() => {
+          if (!this.juegoTerminado) {
+            return this.http.get(`${this.apiUrl}/partida/${this.partidaId}`);
+          }
+          return of(null);
+        }),
+        catchError((error) => {
+          console.error('Error en polling:', error);
+          return of(null);
+        })
+      )
+      .subscribe((resp: any) => {
+        if (resp?.success) this.procesarDatos(resp.data);
+      });
   }
 
   volver(): void {

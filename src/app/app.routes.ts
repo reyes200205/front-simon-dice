@@ -9,6 +9,7 @@ import { PartidaComponent } from './dashboard/partida/partida.component';
 import { PartidasIndexComponent } from './dashboard/partidas-index/partidas-index.component';
 import { SalaEsperaComponent } from './dashboard/sala-espera/sala-espera.component';
 import { WelcomeComponent } from './pages/welcome/welcome.component';
+import { MisPartidasComponent } from './dashboard/mis-partidas/mis-partidas.component';
 
 export const routes: Routes = [
   {
@@ -53,6 +54,10 @@ export const routes: Routes = [
         path: 'partidas',
         component: PartidasIndexComponent
       },
+      {
+        path: 'mis-partidas',
+        component: MisPartidasComponent
+      }
     ]
   },
 ];

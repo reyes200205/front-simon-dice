@@ -161,11 +161,18 @@ export class HomeComponent {
     const colores = this.coloresFormArray;
 
     const coloresDefault = [
-      '#ff0000', '#00ff00', '#0000ff', '#ffff00', 
-      '#ff00ff', '#00ffff', '#ffa500', '#800080',
-      '#ffc0cb', '#a52a2a', '#808080', '#000000',
-      '#ffffff', '#008000', '#000080', '#800000'
-    ];
+    '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF',
+    '#00FFFF', '#FFA500', '#800080', '#FFC0CB', '#A52A2A',
+    '#808080', '#000000', '#FFFFFF', '#008000', '#000080',
+    '#800000', '#808000', '#008080', '#C0C0C0', '#F0E68C',
+    '#40E0D0', '#D2691E', '#B22222', '#DAA520', '#ADFF2F',
+    '#FF1493', '#1E90FF', '#B0C4DE', '#00CED1', '#DC143C',
+    '#FA8072', '#7B68EE', '#00FA9A', '#F4A460', '#2F4F4F',
+    '#BA55D3', '#FFD700', '#E9967A', '#CD5C5C', '#4B0082',
+    '#FF6347', '#7FFF00', '#6A5ACD', '#FF4500', '#9932CC',
+    '#ADD8E6', '#20B2AA', '#FFB6C1', '#BDB76B', '#556B2F'
+  ];
+
 
     while (colores.length < cantidad) {
       const colorDefault = coloresDefault[colores.length] || '#ffffff';
